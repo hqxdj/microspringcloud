@@ -1,0 +1,64 @@
+apply plugin: 'java' // 插件编译环境
+group = 'com.xdj.study' // 组织
+version = '0.0.1-SNAPSHOT' // 版本
+sourceCompatibility = '1.8' // 版本
+
+// 构建脚本 在gradle初始化执行前先执行，类似java中的代码块
+buildscript {
+    // springboot和spring cloud的版本
+    ext {
+        springBootVersion = '1.5.9.RELEASE'
+        springCloudVersion = 'Dalston.SR1'
+    }
+
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+// 配置lombok插件
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+allprojects { // 所有模块的依赖管理
+    // 仓库路径
+    repositories {
+        mavenLocal() // 本地仓库
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" } // 阿里的仓库
+        mavenCentral()
+    }
+    // 所有项目的编译环境
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'spring-boot'
+    // 依赖
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        compileOnly 'org.projectlombok:lombok'
+        runtimeOnly 'mysql:mysql-connector-java'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    // 用于spring cloud 的所有组件的版本控制
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+}
+
+
+
+
+
+
+
+
